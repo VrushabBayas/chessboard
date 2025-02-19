@@ -97,5 +97,5 @@ function getPossibleMoves(piece, position) {
   const moves = pieces[piece.toLowerCase()].getPossibleMoves();
   return moves.length > 0 ? moves.join(", ") : "Move not possible";
 }
-// getPossibleMoves("Pawn", "G1");
+
 module.exports = { getPossibleMoves };
