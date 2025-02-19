@@ -46,6 +46,24 @@ class Pawn extends ChessBoard {
     return this.row < 8 ? [`${this.col}${this.row + 1}`] : [];
   }
 }
+
+class King extends ChessBoard {
+  getPossibleMoves() {
+    return this.generateMoves(
+      [
+        [-1, -1],
+        [-1, 0],
+        [-1, 1],
+        [0, -1],
+        [0, 1],
+        [1, -1],
+        [1, 0],
+        [1, 1],
+      ],
+      2
+    );
+  }
+}
 /**
  * Get the possible moves for a given chess piece at a specific position.
  *
@@ -56,6 +74,7 @@ class Pawn extends ChessBoard {
 function getPossibleMoves(piece, position) {
   const pieces = {
     pawn: new Pawn(position),
+    king: new King(position),
   };
   if (!pieces[piece.toLowerCase()]) return "Invalid piece";
   const moves = pieces[piece.toLowerCase()].getPossibleMoves();
