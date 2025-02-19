@@ -28,7 +28,7 @@ class ChessBoard {
    */
   generateMoves(directions, maxSteps = 8) {
     const moves = [];
-    for (let i = 1; i < maxSteps; i++) {
+    for (let i = 1; i <= maxSteps; i++) {
       directions.forEach(([dx, dy]) => {
         const newColumnIndex = this.colIndex + dx * i;
         const newRow = this.row + dy * i;
@@ -60,8 +60,24 @@ class King extends ChessBoard {
         [1, 0],
         [1, 1],
       ],
-      2
+      1
     );
+  }
+}
+class Queen extends ChessBoard {
+  getPossibleMoves() {
+    const moves = [];
+    // Generate moves in the required order
+    moves.push(...this.generateMoves([[-1, 0]]).sort()); // Left (A4, B4, C4, D4)
+    moves.push(...this.generateMoves([[1, 0]])); // Right (F4, G4, H4)
+    moves.push(...this.generateMoves([[0, -1]]).sort()); // Down (E1, E2, E3)
+    moves.push(...this.generateMoves([[0, 1]])); // Up (E5, E6, E7, E8)
+    moves.push(...this.generateMoves([[-1, 1]]).sort()); // Diagonal up-left (A8, B7, C6, D5)
+    moves.push(...this.generateMoves([[1, -1]])); // Diagonal down-right (F3, G2, H1)
+    moves.push(...this.generateMoves([[-1, -1]]).sort()); // Diagonal down-left (B1, C2, D3)
+    moves.push(...this.generateMoves([[1, 1]])); // Diagonal up-right (F5, G6, H7)
+
+    return moves;
   }
 }
 /**
@@ -75,6 +91,7 @@ function getPossibleMoves(piece, position) {
   const pieces = {
     pawn: new Pawn(position),
     king: new King(position),
+    queen: new Queen(position),
   };
   if (!pieces[piece.toLowerCase()]) return "Invalid piece";
   const moves = pieces[piece.toLowerCase()].getPossibleMoves();
