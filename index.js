@@ -1,4 +1,4 @@
-class ChessBoard {
+class ChessPiece {
   constructor(position) {
     this.columns = "ABCDEFGH";
     this.rows = "12345678";
@@ -7,11 +7,11 @@ class ChessBoard {
     this.colIndex = this.columns.indexOf(this.col);
   }
   /**
-   * Checks if the move is valid on a chessboard.
+   * Checks if the move is valid on a ChessPiece.
    *
    * @param {number} newColumnIndex - The new column index (0-based).
    * @param {number} newRow - The new row index (1-based).
-   * @returns {boolean} True if the move is within the bounds of the chessboard, false otherwise.
+   * @returns {boolean} True if the move is within the bounds of the ChessPiece, false otherwise.
    */
   isValidMove(newColumnIndex, newRow) {
     return (
@@ -41,13 +41,13 @@ class ChessBoard {
   }
 }
 
-class Pawn extends ChessBoard {
+class Pawn extends ChessPiece {
   getPossibleMoves() {
     return this.row < 8 ? [`${this.col}${this.row + 1}`] : [];
   }
 }
 
-class King extends ChessBoard {
+class King extends ChessPiece {
   getPossibleMoves() {
     return this.generateMoves(
       [
@@ -64,27 +64,39 @@ class King extends ChessBoard {
     );
   }
 }
-class Queen extends ChessBoard {
+class Queen extends ChessPiece {
+  constructor(position) {
+    super(position);
+    this.directions = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+      [-1, 1],
+      [1, -1],
+      [-1, -1],
+      [1, 1],
+    ];
+  }
   getPossibleMoves() {
-    const moves = [];
-    // Generate moves in the required order
-    moves.push(...this.generateMoves([[-1, 0]]).sort()); // Left (A4, B4, C4, D4)
-    moves.push(...this.generateMoves([[1, 0]])); // Right (F4, G4, H4)
-    moves.push(...this.generateMoves([[0, -1]]).sort()); // Down (E1, E2, E3)
-    moves.push(...this.generateMoves([[0, 1]])); // Up (E5, E6, E7, E8)
-    moves.push(...this.generateMoves([[-1, 1]]).sort()); // Diagonal up-left (A8, B7, C6, D5)
-    moves.push(...this.generateMoves([[1, -1]])); // Diagonal down-right (F3, G2, H1)
-    moves.push(...this.generateMoves([[-1, -1]]).sort()); // Diagonal down-left (B1, C2, D3)
-    moves.push(...this.generateMoves([[1, 1]])); // Diagonal up-right (F5, G6, H7)
-
-    return moves;
+    return this.generateMoves(this.directions);
+  }
+}
+class Bishop extends ChessPiece {
+  getPossibleMoves() {
+    return this.generateMoves([
+      [-1, 1],
+      [1, 1],
+      [-1, -1],
+      [1, 1],
+    ]);
   }
 }
 /**
  * Get the possible moves for a given chess piece at a specific position.
  *
  * @param {string} piece - The type of chess piece (e.g., "Pawn").
- * @param {string} position - The current position of the piece on the chessboard (e.g., "G1").
+ * @param {string} position - The current position of the piece on the ChessPiece (e.g., "G1").
  * @returns {string} A comma-separated string of possible moves or an error message.
  */
 function getPossibleMoves(piece, position) {
@@ -92,6 +104,7 @@ function getPossibleMoves(piece, position) {
     pawn: new Pawn(position),
     king: new King(position),
     queen: new Queen(position),
+    bishop: new Bishop(position),
   };
   if (!pieces[piece.toLowerCase()]) return "Invalid piece";
   const moves = pieces[piece.toLowerCase()].getPossibleMoves();
